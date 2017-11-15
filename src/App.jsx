@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import LogoAndroid from './img/images.png';
-import LogoApple from './img/ios_app_store.png';
+import LogoAndroid from './img/images.fw.png';
+import LogoApple from './img/ios_app_store.fw.png';
 import LinhaV from  './img/LinhaV.png';
 import TableExample from './table/TableExample'
 
@@ -17,9 +17,13 @@ class App extends Component {
       content: <div class="counters counters-text-light">
       <div class="col-md-4 col-sm-4">
         <div class="counter">
-        <p>App do aluno. Escolha uma das opções disponéis.</p>
+        <p>App do aluno. Escolha uma das opções disponíveis.</p>
           <img src={LogoAndroid} alt="logo Android" />
           <img src={LogoApple} alt="logo Apple" />
+          
+          
+
+          
         </div>
       </div>
       <div class="col-md-4 col-sm-4">

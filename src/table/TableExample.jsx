@@ -1,30 +1,32 @@
 import React, { Component } from 'react';
-import {BootstrapTable, TableHeaderColumn, InsertButton, InsertModalHeader, InsertModalFooter} from 'react-bootstrap-table';;
+import {BootstrapTable, TableHeaderColumn, InsertButton, InsertModalHeader, InsertModalFooter} from 'react-bootstrap-table';
+
+import './TableExample.css';
 
 var student = [{
     id: 1,
-    name: "João",
-    telephone: 3228.4390,
+    name: "Lenilson",
+    telephone: "(85) 99733-1000",
     status: 'Ativo'
 }, {
     id: 2,
-    name: "Maria",
-    telephone: 3445.4290,
-    status: 'Ativo'
+    name: "Ivo",
+    telephone: "24",
+    status: 'Pendente'
 }, {
     id: 3,
-    name: "Fernanda",
-    telephone: 3455.7890,
+    name: "Helderrr",
+    telephone: "02424242424",
     status: 'Ativo'
 }];
 
 const options = {
-    onRowClick: function(row) {
+    /*onRowClick: function(row) {
       alert(`You click row id: ${row.id}`);
-    },
-    onRowDoubleClick: function(row) {
+    },*/
+    /*onRowDoubleClick: function(row) {
       alert(`You double click row id: ${row.id}`);
-    },
+    },*/
     /* insertBtn(onClick){
         return (
           <InsertButton
@@ -77,11 +79,19 @@ export default class TableExample extends Component {
   render() {
     return (
       <div>
-         <BootstrapTable data={ student } options={ options } selectRow={ selectRow } insertRow deleteRow>
+          { /*<InsertButton
+            btnText='insert customizado'
+            btnContextual='btn-warning'
+            className='my-custom-class'
+            btnGlyphicon='glyphicon-edit'
+            onClick={ () => this.handleInsertButtonClick() }
+          /> */}
+         <BootstrapTable data={ student } options={ options } selectRow={ selectRow } striped hover condensed insertRow deleteRow>
             <TableHeaderColumn dataField='id' isKey>Id</TableHeaderColumn>
             <TableHeaderColumn dataField='name'>Nome</TableHeaderColumn>
             <TableHeaderColumn dataField='telephone'>Telefone</TableHeaderColumn>
             <TableHeaderColumn dataField='status'>Status</TableHeaderColumn>
+            
             {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
         </BootstrapTable>
       </div>
