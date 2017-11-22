@@ -1,98 +1,148 @@
 import React, { Component } from 'react';
-import {BootstrapTable, TableHeaderColumn, InsertButton, InsertModalHeader, InsertModalFooter} from 'react-bootstrap-table';
-
+import { BootstrapTable, TableHeaderColumn, InsertButton, InsertModalHeader, InsertModalFooter } from 'react-bootstrap-table';
+import axios from 'axios';
+//import TableFooter from './TableFooter'
 import './TableExample.css';
 
-var student = [{
-    id: 1,
-    name: "Lenilson",
-    telephone: "(85) 99733-1000",
-    status: 'Ativo'
-}, {
-    id: 2,
-    name: "Ivo",
-    telephone: "24",
-    status: 'Pendente'
-}, {
-    id: 3,
-    name: "Helderrr",
-    telephone: "02424242424",
-    status: 'Ativo'
-}];
+export default class TableExample extends Component {
+  constructor() {
+    super();
+    this.state = {
+      rows: []
+    }
+  }
 
-const options = {
-    /*onRowClick: function(row) {
-      alert(`You click row id: ${row.id}`);
-    },*/
-    /*onRowDoubleClick: function(row) {
-      alert(`You double click row id: ${row.id}`);
-    },*/
-    /* insertBtn(onClick){
-        return (
-          <InsertButton
-            btnText='Inserir'
-            btnContextual='btn-success'
-            className='my-custom-class'
-            btnGlyphicon='glyphicon-edit'
-           onClick={ options.createCustomModalHeader() }/>
-        );
-      }
-    , */
-    handleInsertButtonClick(onClick) {
+  runners = [{
+    id: 1,
+    name: "Teste2",
+    telephone: 99733.1000,
+    status: 'Ativo'
+  }, {
+    id: 2,
+    name: "Teste",
+    telephone: 999889988,
+    status: "Inativo"
+  }];
+
+  selectRow = {
+    mode: 'checkbox',
+    //showOnlySelected: true
+  };
+
+  
+
+  componentDidMount = () => { //  console.log('token', localStorage.getItem('token'));
+    axios.get('http://labrih-assessoriaesportiva.herokuapp.com/runners/', {
+      headers: {'x-access-token': localStorage.getItem('token')}
+    }).then((response) => {
+      this.fillTable(response.data.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  fillTable = (runners) => {
+    let rows = [];
+    runners.map((runner, key) => {
+      console.log()
+      rows.push({
+          id: key + 1,
+          name: runner.name,
+          telephone: runner.cellphone,
+          status: runner.active ? 'Ativo' : 'Inativo'
+      })
+    });
+    this.setState({ rows })
+  };
+
+  createCustomModalHeader = (closeModal, save) => {
+    return (
+      <InsertModalHeader
+      className='my-custom-class'
+      title='Novo Atleta'
+    />
+    )
+  }
+
+  createCustomModalFooter = (closeModal, save) => {
+    return (
+      <InsertModalFooter
+        className='my-custom-class'
+        saveBtnText='Salvar'
+        closeBtnText='Sair'
+        closeBtnContextual='btn-info'
+        saveBtnContextual='btn-success'
+        closeBtnClass='my-close-btn-class'
+        saveBtnClass='my-save-btn-class'
+        beforeClose={ this.beforeClose }
+        beforeSave={ this.beforeSave }
+        onModalClose={ () => this.handleModalClose(closeModal) }
+        onSave={ () => this.handleSave(save) }
+      />
+    )
+  }
+
+  handleSave(save) {
+    // Custom your onSave event here,
+    // it's not necessary to implement this function if you have no any process before save
+    const dataToSend = {
+      //cellphone: this.,
+      name: 'contato'
+    }
+    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/runners', dataToSend).then((response) => {
+      this.treatResponse(response.data);
+    }).catch(function (error) {
+      console.log(error);
+    });
+    save();
+  }
+
+  render() {
+
+    console.log(this.props)
+
+    const options = {
+      insertText: 'Inserir',
+      deleteText: 'Excluir',
+      saveText: 'Salvar',
+      closetext: 'Fechar',
+      insertModalHeader: this.createCustomModalHeader,      
+      insertModalFooter: this.createCustomModalFooter,
+      handleInsertButtonClick(onClick) {
         // Custom your onClick event here,
         // it's not necessary to implement this function if you have no any process before onClick
         console.log('This is my custom function for InserButton click event');
         onClick();
       },
-    beforeClose(e) {
+      beforeClose(e) {
         alert(`[Custom Event]: Before modal close event triggered!`);
       },
-    handleModalClose(closeModal) {
+      beforeSave(e) {
+        alert(`[Custom Event]: Modal save event triggered!`);
+      },
+      handleModalClose(closeModal) {
         // Custom your onCloseModal event here,
         // it's not necessary to implement this function if you have no any process before modal close
         console.log('This is my custom function for modal close event');
         closeModal();
-    },
-    createCustomModalHeader(closeModal, save) {
+      },
+      /* insertModalHeader(closeModal, save) {
         return (
-            <InsertModalHeader
-            className='my-custom-class'
-            title='Inserir'
-            beforeClose={ this.beforeClose }
-            onModalClose={ () => this.handleModalClose() }/>
-            // hideClose={ true } to hide the close button
-        );
-    }
-}
-
-const selectRow = {
-    mode: 'checkbox',
-    //showOnlySelected: true
-  };
-
-export default class TableExample extends Component {
-    constructor() {
-        super();
-        this.state = {}
+         
+            
+        )
+      } */
     }
 
-  render() {
     return (
       <div>
-          { /*<InsertButton
-            btnText='insert customizado'
-            btnContextual='btn-warning'
-            className='my-custom-class'
-            btnGlyphicon='glyphicon-edit'
-            onClick={ () => this.handleInsertButtonClick() }
-          /> */}
-         <BootstrapTable data={ student } options={ options } selectRow={ selectRow } striped hover condensed insertRow deleteRow>
-            <TableHeaderColumn dataField='id' isKey>Id</TableHeaderColumn>
-            <TableHeaderColumn dataField='name'>Nome</TableHeaderColumn>
-            <TableHeaderColumn dataField='telephone'>Telefone</TableHeaderColumn>
-            <TableHeaderColumn dataField='status'>Status</TableHeaderColumn>
-            
-            {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
+        <BootstrapTable data={this.state.rows} options={options} selectRow={this.selectRow} striped hover condensed insertRow deleteRow>
+          <TableHeaderColumn dataField='id' isKey>Id</TableHeaderColumn>
+          <TableHeaderColumn dataField='name'>Nome</TableHeaderColumn>
+          <TableHeaderColumn dataField='telephone'>Telefone</TableHeaderColumn>
+          <TableHeaderColumn dataField='status'>Status</TableHeaderColumn>
+          {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
         </BootstrapTable>
       </div>
     )
