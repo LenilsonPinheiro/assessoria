@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn, InsertModalHeader, InsertModalFooter } from 'react-bootstrap-table';
 import axios from 'axios';
+import moment from 'moment';
+import _ from 'lodash';
 //import TableFooter from './TableFooter'
 import './TableExample.css';
 
@@ -12,7 +14,7 @@ export default class TableExample extends Component {
     }
   }
 
-  componentDidMount = () => { //  console.log('token', localStorage.getItem('token'));
+  componentDidMount = () => { // console.log('token', localStorage.getItem('token'));
     axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas', {
       headers: {'x-access-token': localStorage.getItem('token')}
     }).then((response) => {
@@ -30,6 +32,10 @@ export default class TableExample extends Component {
       return rows.push({
           id: runner._id,
           nome: runner.nome,
+          data_nascimento: moment(runner.data_nascimento).format('DD/MM/YYYY hh:mm a').toString(),
+          nucleo: runner.nucleo,
+          numero: runner.numero,
+          tamanho_camisa: runner.tamanho_camisa,
           celular: runner.celular,
           ativo: runner.active ? 'Ativo' : 'Inativo'
       });
@@ -79,9 +85,34 @@ export default class TableExample extends Component {
     save();
   }
 
-  render() {
+  onAfterSaveCell = (row, cellName, cellValue) => {
+    console.log('row:', row);
+  }
+  
+  
+  onBeforeSaveCell = (row, cellName, cellValue) => {
+    const dataToSend = Object.assign({}, row);
+    
+    delete dataToSend.id;
 
-    console.log(this.props)
+    row.ativo = true;
+    if (dataToSend.ativo === "Inativo") dataToSend.ativo = false;
+
+    console.log('row:', row);
+    console.log('dataToSend', dataToSend)
+
+    console.log('token:', localStorage.getItem('token'))
+    
+    axios.put(`http://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/${row.id}`, {
+      headers: {'x-access-token': localStorage.getItem('token')}
+    }, {cellName: cellValue} ).then((response) => {
+      this.treatResponse(response.data);
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  render() {
 
     const options = {
       insertText: 'Inserir',
@@ -118,11 +149,30 @@ export default class TableExample extends Component {
 
     return (
       <div>
-        <BootstrapTable data={this.state.rows} options={options} selectRow={this.selectRow} striped hover condensed insertRow deleteRow>
+        <BootstrapTable
+          data={this.state.rows}
+          options={options}
+          selectRow={this.selectRow}
+          cellEdit={{
+            mode: 'dbclick',
+            blurToSave: true,
+            beforeSaveCell: this.onBeforeSaveCell, // a hook for before saving cell
+            afterSaveCell: this.onAfterSaveCell  // a hook for after saving cell
+          }}
+          striped
+          hover
+          condensed
+          insertRow
+          deleteRow
+        >
           <TableHeaderColumn dataField='id' isKey>Id</TableHeaderColumn>
           <TableHeaderColumn dataField='nome'>Nome</TableHeaderColumn>
+          <TableHeaderColumn dataField='data_nascimento'>Data de Nascimento</TableHeaderColumn>
+          <TableHeaderColumn dataField='nucleo'>Núcleo</TableHeaderColumn>
+          <TableHeaderColumn dataField='numero'>Nº</TableHeaderColumn>
+          <TableHeaderColumn dataField='tamanho_camisa'>Tamanho Camisa</TableHeaderColumn>
           <TableHeaderColumn dataField='celular'>Telefone</TableHeaderColumn>
-          <TableHeaderColumn dataField='ativo'>Status</TableHeaderColumn>
+          <TableHeaderColumn dataField='ativo' editable={ { type: 'checkbox', options: { values: 'Ativo:Inativo' } } }>Status</TableHeaderColumn>
           {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
         </BootstrapTable>
       </div>
