@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import LogoAndroid from './img/images.fw.png';
 import LogoApple from './img/ios_app_store.fw.png';
 import LinhaV from './img/LinhaV.png';
@@ -24,7 +24,7 @@ class App extends Component {
         </div>
         <div className="col-md-4 col-sm-4">
           <div className="counter">
-            <img src={LinhaV} />
+            <img src={LinhaV} alt="linhaV"/>
           </div>
         </div>
         <div className="col-md-4 col-sm-4">
@@ -45,17 +45,22 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
+    console.log(localStorage.getItem('token'))
+    console.log(localStorage.getItem('token') !== '')
+    if (localStorage.getItem('token') !== '' ) {
+      this.setTable();
+    }
     this.email.value = 'contato@labrih.com.br';
     this.password.value = 'contato'
   }
 
   login = () => {
     const dataToSend = {
-      email: 'contato@labrih.com.br',
-      password: 'contato'
+      usuario: 'labrih',
+      senha: 'labrih'
     }
-    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/authenticate', dataToSend).then((response) => {
+    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/autenticar', dataToSend).then((response) => {
       this.treatResponse(response.data);
     }).catch(function (error) {
       console.log(error);
@@ -64,6 +69,10 @@ class App extends Component {
 
 treatResponse = (token) => {
   localStorage.setItem('token', token);
+  this.setTable();
+}
+
+setTable = () => {
   this.setState({ content: <div className="panel panel-default"><TableExample /></div> });
 }
 
