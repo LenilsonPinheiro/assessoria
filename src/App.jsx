@@ -18,9 +18,12 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-            <img src={LogoAndroid} alt="logo Android" />
-            <img src={LogoApple} alt="logo Apple" />
+            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+            
+            {/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
+            <img src={LogoApple} alt="logo Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
           </div>
+          
         </div>
         <div className="col-md-4 col-sm-4">
           <div className="counter">
@@ -48,32 +51,45 @@ class App extends Component {
   componentDidMount = () => {
     console.log(localStorage.getItem('token'))
     console.log(localStorage.getItem('token') !== '')
-    if (localStorage.getItem('token') !== '' ) {
+    if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== '' ) {
       this.setTable();
     }
-    this.email.value = 'contato@labrih.com.br';
-    this.password.value = 'contato'
+    /*this.email.value = 'labrih';
+    this.password.value = 'labrih'*/
   }
 
   login = () => {
     const dataToSend = {
-      usuario: 'labrih',
-      senha: 'labrih'
+      /*usuario: 'labrih',
+      senha: 'labrih'*/
+
+      usuario: this.email.value,
+      senha: this.password.value
+
     }
     axios.post('http://labrih-assessoriaesportiva.herokuapp.com/autenticar', dataToSend).then((response) => {
       this.treatResponse(response.data);
     }).catch(function (error) {
-      console.log(error);
+      /*console.log(error);*/
+      alert("Login ou Senha inválidos.");
     });
 }
 
-treatResponse = (token) => {
+treatResponse = (token) => { 
+  
   localStorage.setItem('token', token);
   this.setTable();
+  this.setState({logOutButton: <Button onclick= {this.logOut}>LogOut</Button>});
 }
 
 setTable = () => {
   this.setState({ content: <div className="panel panel-default"><TableExample /></div> });
+}
+
+logOut = () => {
+
+localStorage.clear();
+window.location.reload();
 }
 
   render() {
@@ -84,7 +100,8 @@ setTable = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-12">
-                <h1>Assesoria</h1>
+                <h1>Assesoria {this.state.logOutButton} </h1>
+
               </div>
             </div>
           </div>
