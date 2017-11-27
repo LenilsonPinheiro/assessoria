@@ -27,9 +27,11 @@
 }
 
 .botaoAndroid {
-	background-image:url("./img/images.fw.png");
-	min-height: 125px;
-	min-width: 125px;
+	background-image:url("./img/GooglePlay.fw.png");
+	min-height: 100px !important;
+	min-width: 100px !important;
+	max-height: 100px !important;
+	max-width: 100px !important;
 
 /*
 incluir no html
@@ -39,7 +41,11 @@ incluir no html
 
 }
 .botaoApple {
-	background-image:url("./img/ios_app_store.fw.png");
+	background-image:url("./img/AppleStore.fw.png");
+	min-height: 100px !important;
+	min-width: 100px  !important;
+	max-height: 100px !important;
+	max-width: 100px !important;
 }
 
 

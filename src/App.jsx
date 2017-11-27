@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
-import LogoAndroid from './img/images.fw.png';
-import LogoApple from './img/ios_app_store.fw.png';
+/*import LogoAndroid from './img/images.fw.png';
+import LogoApple from './img/ios_app_store.fw.png';*/
+
+import LogoAndroid from './img/GooglePlay.fw.png';
+import LogoApple from './img/AppleStore.fw.png';
+
 import LinhaV from './img/LinhaV.png';
 import TableExample from './table/TableExample'
 import axios from 'axios';
@@ -21,7 +25,7 @@ class App extends Component {
             <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
             
             {/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
-            <img src={LogoApple} alt="logo Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+            <img src={LogoApple} alt="Download para Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
           </div>
           
         </div>
@@ -49,10 +53,11 @@ class App extends Component {
   }
 
   componentDidMount = () => {
+    localStorage.clear();
     console.log(localStorage.getItem('token'))
     console.log(localStorage.getItem('token') !== '')
     if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== '' ) {
-      this.setTable();
+      this.setTable();      
     }
     /*this.email.value = 'labrih';
     this.password.value = 'labrih'*/
