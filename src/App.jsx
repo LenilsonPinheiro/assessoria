@@ -18,10 +18,10 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onClick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
             
             {/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
-            <img src={LogoApple} alt="logo Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+            <img src={LogoApple} alt="logo Apple" title="Download para IOS" onClick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
           </div>
           
         </div>
@@ -87,9 +87,8 @@ setTable = () => {
 }
 
 logOut = () => {
-
-localStorage.clear();
-window.location.reload();
+  localStorage.clear();
+  window.location.reload();
 }
 
   render() {
