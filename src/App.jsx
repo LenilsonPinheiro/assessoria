@@ -5,6 +5,7 @@ import LogoApple from './img/ios_app_store.fw.png';*/
 
 import LogoAndroid from './img/GooglePlay.fw.png';
 import LogoApple from './img/AppleStore.fw.png';
+import Logo4Throtte from './img/logo2peq.fw.png';
 
 import LinhaV from './img/LinhaV.png';
 import TableExample from './table/TableExample'
@@ -22,16 +23,20 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onClick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+
+{/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
+
+{/*
+            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onClick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'" />
             
-            {/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
-            <img src={LogoApple} alt="Download para Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'"/>
+            <img src={LogoApple} alt="Download para Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'" />
+*/}          
           </div>
-          
+
         </div>
         <div className="col-md-4 col-sm-4">
           <div className="counter">
-            <img src={LinhaV} alt="linhaV"/>
+            <img src={LinhaV} alt="linhaV" />
           </div>
         </div>
         <div className="col-md-4 col-sm-4">
@@ -53,48 +58,64 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    localStorage.clear();
+    //localStorage.clear();
+
     console.log(localStorage.getItem('token'))
     console.log(localStorage.getItem('token') !== '')
-    if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== '' ) {
-      this.setTable();      
+    if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== '') {
+      this.setTable();
     }
-    /*this.email.value = 'labrih';
-    this.password.value = 'labrih'*/
+    this.email.value = 'labrih';
+    this.password.value = 'labrih';
   }
 
   login = () => {
     const dataToSend = {
-      /*usuario: 'labrih',
-      senha: 'labrih'*/
-
       usuario: this.email.value,
       senha: this.password.value
-
     }
-    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/autenticar', dataToSend).then((response) => {
-      this.treatResponse(response.data);
+    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/autenticar', dataToSend)
+    .then((response) => {
+      localStorage.setItem('token', response.data);
+      return response.data;
+    }).then(token => {
+      var cabecalho = {
+        headers: {
+          'x-access-token': token
+        }      
+      }
+      return axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/nucleos', cabecalho);
+    }).then(nucleoPromisse => {
+      console.log('nucleos login', nucleoPromisse.data.data);
+      localStorage.setItem('nucleos', JSON.stringify(nucleoPromisse.data.data));
+    }).then(() => {
+      var cabecalho = {
+        headers: {
+          'x-access-token': localStorage.getItem('token')
+        }      
+      }
+      return axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/tamanhoscamisa', cabecalho);
+    }).then(tamanhos => {
+      console.log('tamanhos login', tamanhos.data.data);
+      localStorage.setItem('tamanhos', JSON.stringify(tamanhos.data.data));
+    }).then(() => {
+      this.setTable();
+      this.setState({ logOutButton: <Button onclick={this.logOut}>LogOut</Button> });
     }).catch(function (error) {
-      /*console.log(error);*/
+      console.log(error);
       alert("Login ou Senha inválidos.");
     });
-}
+  }
 
-treatResponse = (token) => { 
-  
-  localStorage.setItem('token', token);
-  this.setTable();
-  this.setState({logOutButton: <Button onclick= {this.logOut}>LogOut</Button>});
-}
+  setTable = () => {
+    this.setState({ content: <div className="panel panel-default"><TableExample /></div> });
+  }
 
-setTable = () => {
-  this.setState({ content: <div className="panel panel-default"><TableExample /></div> });
-}
+  logOut = () => {
+    /*localStorage.clear();*/
+    window.location.reload(true);
 
-logOut = () => {
-  localStorage.clear();
-  window.location.reload();
-}
+  }
 
   render() {
     return (
@@ -103,9 +124,11 @@ logOut = () => {
         <section className="page-header">
           <div className="container">
             <div className="row">
+              <img src={Logo4Throtte} alt="4Throtte" title="4Throtte" />
               <div className="col-md-12">
-                <h1>Assesoria {this.state.logOutButton} </h1>
-
+                <h1>Assesoria XptOoo
+                  <p>{this.state.logOutButton}</p>
+                </h1>
               </div>
             </div>
           </div>

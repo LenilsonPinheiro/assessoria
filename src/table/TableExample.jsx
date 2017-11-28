@@ -15,29 +15,45 @@ export default class TableExample extends Component {
   }
 
   componentDidMount = () => { // console.log('token', localStorage.getItem('token'));
-    axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas', {
-      headers: {'x-access-token': localStorage.getItem('token')}
+    axios.get('https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas', {
+      headers: { 'x-access-token': localStorage.getItem('token') }
     }).then((response) => {
       this.fillTable(response.data.data)
     })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
+
   fillTable = (runners) => {
-    console.log(runners);
+
+    var nucleos = JSON.parse(localStorage.getItem('nucleos'));
+    var tamanhos = JSON.parse(localStorage.getItem('tamanhos'));
+    
+    console.log('nucleos fillTable', nucleos);
     let rows = [];
+
     runners.map((runner, key) => {
       return rows.push({
-          id: runner._id,
-          nome: runner.nome,
-          data_nascimento: moment(runner.data_nascimento).format('DD/MM/YYYY hh:mm a').toString(),
-          nucleo: runner.nucleo,
-          numero: runner.numero,
-          tamanho_camisa: runner.tamanho_camisa,
-          celular: runner.celular,
-          ativo: runner.active ? 'Ativo' : 'Inativo'
+        id: runner._id,
+        nome: runner.nome,
+        /*data_nascimento: moment(runner.data_nascimento).format('DD/MM/YYYY hh:mm a').toString(),*/
+
+        /*data_nascimento: moment(runner.data_nascimento).format('YYYY-MM-DD').toString(),*/
+        data_nascimento: moment(runner.data_nascimento).format('DD-MM-YYYY').toString(),
+
+        nucleo: runner.nucleo,
+        nucleoDescricao: nucleos.find((element, index, array) => {
+          return element._id == runner.nucleo
+        }).Descricao,
+        numero: runner.numero,
+        tamanho_camisaDescricao: tamanhos.find((element, index, array) => {
+          return element._id == runner.tamanho_camisa
+        }).Descricao,
+        tamanho_camisa: runner.tamanho_camisa,
+        celular: runner.celular,
+        ativo: runner.active ? 'Ativo' : 'Inativo'
       });
     });
     this.setState({ rows })
@@ -46,9 +62,9 @@ export default class TableExample extends Component {
   createCustomModalHeader = (closeModal, save) => {
     return (
       <InsertModalHeader
-      className='my-custom-class'
-      title='Novo Atleta'
-    />
+        className='my-custom-class'
+        title='Novo Atleta'
+      />
     )
   }
 
@@ -62,54 +78,107 @@ export default class TableExample extends Component {
         saveBtnContextual='btn-success'
         closeBtnClass='my-close-btn-class'
         saveBtnClass='my-save-btn-class'
-        beforeClose={ this.beforeClose }
-        beforeSave={ this.beforeSave }
-        onModalClose={ () => this.handleModalClose(closeModal) }
-        onSave={ () => this.handleSave(save) }
+        beforeClose={this.beforeClose}
+        beforeSave={this.beforeSave}
+        onModalClose={() => this.handleModalClose(closeModal)}
+        onSave={() => this.handleSave(save)}
       />
     )
   }
 
-  handleSave(save) {
-    // Custom your onSave event here,
-    // it's not necessary to implement this function if you have no any process before save
-    const dataToSend = {
-      //cellphone: this.,
-      name: 'contato'
+  handleSave = (save) => {
+    var dataToSend = { 
+      
+      /*_id,assessoria,numero,cpf,data_nascimento,celular,tamanho_camisa,nucleo,nome,ativo*/
     }
-    axios.post('http://labrih-assessoriaesportiva.herokuapp.com/runners', dataToSend).then((response) => {
+    console.log("token do salvar: ",this);
+    axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", {
+      headers: {
+      'x-access-token': localStorage.getItem('token')
+    }}, dataToSend).then((response) => {
       this.treatResponse(response.data);
     }).catch(function (error) {
       console.log(error);
     });
+    console.log("token do salvar: ",localStorage.getItem('token'));
     save();
   }
 
-  onAfterSaveCell = (row, cellName, cellValue) => {
+  onAfterSaveCell = (row, cellName, cellValue) => {/*
+    var id = row.id;
+
+    axios.put("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/"+id, row, {
+      headers: {
+        'x-access-token': localStorage.getItem('token')
+      }
+    }).then(a => {
+      console.log(a);
+    }).catch(e => {
+      console.log(e);
+    })
+
     console.log('row:', row);
-  }
-  
-  
+  */}
+
+
   onBeforeSaveCell = (row, cellName, cellValue) => {
-    const dataToSend = Object.assign({}, row);
+    var dataToSend = Object.assign({}, row);
+    var dataToSendid = dataToSend.id;
+    var id = row.id;
+
+    console.log('data to send: ', dataToSend);
+    console.log('token: ', localStorage.getItem('token'));
+    console.log('id: ', id);
+
+        
+    console.log('Row data antes do tratamento: ', row);
+    console.log('CELLNAME antes do tratamento: ', cellName);
     
-    delete dataToSend.id;
-
-    row.ativo = true;
-    if (dataToSend.ativo === "Inativo") dataToSend.ativo = false;
-
-    console.log('row:', row);
-    console.log('dataToSend', dataToSend)
-
-    console.log('token:', localStorage.getItem('token'))
+   if(cellName === row.data_nascimento) {
     
-    axios.put(`http://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/${row.id}`, {
-      headers: {'x-access-token': localStorage.getItem('token')}
-    }, {cellName: cellValue} ).then((response) => {
-      this.treatResponse(response.data);
-    }).catch(function (error) {
-      console.log(error);
-    });
+    console.log('Dentro do IF: ', row);
+    console.log('Dentro do IF: ', cellName);
+    console.log('Row data Dentro do IF: ', row);
+    console.log('CELLNAME Dentro do IF: ', cellName);
+    
+    var dtTratada = moment(dataToSend.data_nascimento.toString(), 'DD/MM/YYYY');
+    var dtOriginal = dtTratada.format('YYYY-MM-DD');
+
+    console.log('Data antes DENTRO DO IF:', dtTratada);
+    console.log('Data depois DENTRO DO IF:', dtOriginal);
+
+     row.data_nascimento = dtOriginal;
+   }
+
+   
+
+   console.log('Data antes FORA DO IF:', dtTratada);
+   console.log('Data depois FORA DO IF:', dtOriginal);
+
+   console.log('DEPOIS do IF: ', row);
+   console.log('DEPOIS do IF: ', cellName);
+
+   console.log('data to send: ', dataToSend);
+   console.log('token: ', localStorage.getItem('token'));
+   console.log('id: ', id);
+
+        axios.put("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/"+id, row, {
+          headers: {
+            'x-access-token': localStorage.getItem('token')
+          }
+        }).then(a => {
+          console.log(a);
+        }).catch(e => {
+          console.log(e);
+        })
+
+        var dtTratada = moment(dataToSend.data_nascimento.toString(), 'DD/MM/YYYY');
+        var dtOriginal = dtTratada.format('YYYY-MM-DD');
+        row.data_nascimento = dtOriginal;
+        
+        
+        console.log('row:', row);
+        console.log('CELLVALUE data depois:',cellValue )
   }
 
   render() {
@@ -119,7 +188,7 @@ export default class TableExample extends Component {
       deleteText: 'Excluir',
       saveText: 'Salvar',
       closetext: 'Fechar',
-      insertModalHeader: this.createCustomModalHeader,      
+      insertModalHeader: this.createCustomModalHeader,
       insertModalFooter: this.createCustomModalFooter,
       handleInsertButtonClick(onClick) {
         // Custom your onClick event here,
@@ -150,6 +219,7 @@ export default class TableExample extends Component {
     return (
       <div>
         <BootstrapTable
+
           data={this.state.rows}
           options={options}
           selectRow={this.selectRow}
@@ -163,16 +233,19 @@ export default class TableExample extends Component {
           hover
           condensed
           insertRow
-          deleteRow
+        /*deleteRow*/
         >
-          <TableHeaderColumn dataField='id' isKey>Id</TableHeaderColumn>
+          <TableHeaderColumn dataField='id' isKey >Id</TableHeaderColumn>
           <TableHeaderColumn dataField='nome'>Nome</TableHeaderColumn>
           <TableHeaderColumn dataField='data_nascimento'>Data de Nascimento</TableHeaderColumn>
-          <TableHeaderColumn dataField='nucleo'>Núcleo</TableHeaderColumn>
+          {/*<TableHeaderColumn dataField='nucleo' hidden >Núcleo</TableHeaderColumn>*/}
+          <TableHeaderColumn dataField='nucleoDescricao'>Núcleo</TableHeaderColumn>
           <TableHeaderColumn dataField='numero'>Nº</TableHeaderColumn>
-          <TableHeaderColumn dataField='tamanho_camisa'>Tamanho Camisa</TableHeaderColumn>
+          {/*<TableHeaderColumn dataField='tamanho_camisa' hidden >Tamanho Camisa</TableHeaderColumn>*/}
+          <TableHeaderColumn dataField='tamanho_camisaDescricao'>Tamanho Camisa</TableHeaderColumn>
           <TableHeaderColumn dataField='celular'>Telefone</TableHeaderColumn>
-          <TableHeaderColumn dataField='ativo' editable={ { type: 'checkbox', options: { values: 'Ativo:Inativo' } } }>Status</TableHeaderColumn>
+          <TableHeaderColumn dataField='ativo' hidden  editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>
+          {/*<TableHeaderColumn dataField='ativo' hidden hiddenOnInsert editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>*/}
           {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
         </BootstrapTable>
       </div>
