@@ -10,11 +10,35 @@ export default class TableExample extends Component {
   constructor() {
     super();
     this.state = {
-      rows: []
+      rows: [],
+      //tamanho_camisa: ['P', 'M', 'G', 'GG', 'XG'],
     }
   }
 
   componentDidMount = () => { // console.log('token', localStorage.getItem('token'));
+
+    
+    var tamanhos = JSON.parse(localStorage.getItem('tamanhos'));
+    var nucleos = JSON.parse(localStorage.getItem('nucleos'));
+
+    let tamanho_camisa = [];
+    tamanhos.map(tamanho => {
+      tamanho_camisa.push(tamanho.Descricao);
+    });
+    let nucleos_desc = [];
+    nucleos.map(nucleo => {
+      nucleos_desc.push(nucleo.Descricao);
+    });
+
+    this.setState({
+      tamanho_camisa,
+      nucleos_desc
+    });
+
+    this.loadData();
+  }
+
+  loadData = () => {
     axios.get('https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas', {
       headers: { 'x-access-token': localStorage.getItem('token') }
     }).then((response) => {
@@ -27,11 +51,11 @@ export default class TableExample extends Component {
 
 
   fillTable = (runners) => {
-
+    console.log(runners);
     var nucleos = JSON.parse(localStorage.getItem('nucleos'));
     var tamanhos = JSON.parse(localStorage.getItem('tamanhos'));
     
-    console.log('nucleos fillTable', nucleos);
+    console.log('tamanhos fillTable', tamanhos);
     let rows = [];
 
     runners.map((runner, key) => {
@@ -53,7 +77,8 @@ export default class TableExample extends Component {
         }).Descricao,
         tamanho_camisa: runner.tamanho_camisa,
         celular: runner.celular,
-        ativo: runner.active ? 'Ativo' : 'Inativo'
+        ativo: runner.ativo === true ? 'Ativo' : 'Inativo',
+        cpf: runner.cpf,
       });
     });
     this.setState({ rows })
@@ -87,12 +112,13 @@ export default class TableExample extends Component {
   }
 
   handleSave = (save) => {
+    
     var dataToSend = { 
       
       /*_id,assessoria,numero,cpf,data_nascimento,celular,tamanho_camisa,nucleo,nome,ativo*/
     }
-    console.log("token do salvar: ",this);
-    axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", {
+    
+    /*axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", {
       headers: {
       'x-access-token': localStorage.getItem('token')
     }}, dataToSend).then((response) => {
@@ -100,9 +126,60 @@ export default class TableExample extends Component {
     }).catch(function (error) {
       console.log(error);
     });
-    console.log("token do salvar: ",localStorage.getItem('token'));
+    console.log("token do salvar: ",localStorage.getItem('token'));*/
     save();
   }
+
+
+  findNucleo = (nucleDesc) => {
+    var nucleos = JSON.parse(localStorage.getItem('nucleos'));
+
+    const nucleoDescricao = nucleos.find((element, index, array) => {
+      return element.Descricao == nucleDesc
+    })._id;
+
+    return nucleoDescricao;
+  }
+
+  findTamanho = (tamanhoDesc) => {
+    var tamanhos = JSON.parse(localStorage.getItem('tamanhos'));
+
+    const tamDescricao = tamanhos.find((element, index, array) => {
+      return element.Descricao == tamanhoDesc
+    })._id;
+
+    return tamDescricao;
+  }
+
+  onAfterInsertRow = (row) => {
+    console.log("row", row);
+
+    var dataToSend = {
+      celular: row.celular,
+      numero: row.numero,
+      cpf: row.cpf,
+      data_nascimento: row.data_nascimento,
+      nome: row.nome,
+      nucleo: this.findNucleo(row.nucleoDescricao),
+      tamanho_camisa: this.findTamanho(row.tamanho_camisaDescricao),
+      ativo: row.ativo,
+
+    }
+    let newRowStr = '';
+    console.log('dataToSend', dataToSend);
+
+    axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", dataToSend, {
+      headers: {
+      'x-access-token': localStorage.getItem('token')
+    }}).then((response) => {
+      this.treatResponse(response.data);
+    }).catch(function (error) {
+      console.log(error);
+      alert(error.response.data.data.message);
+      this.loadData();
+    });
+    console.log("token do salvar: ",localStorage.getItem('token'));
+    }
 
   onAfterSaveCell = (row, cellName, cellValue) => {/*
     var id = row.id;
@@ -132,14 +209,15 @@ export default class TableExample extends Component {
 
         
     console.log('Row data antes do tratamento: ', row);
+    console.log('cellvalue', cellValue);
     console.log('CELLNAME antes do tratamento: ', cellName);
     
-   if(cellName === row.data_nascimento) {
+   if(cellName === 'data_nascimento') {
     
-    console.log('Dentro do IF: ', row);
-    console.log('Dentro do IF: ', cellName);
-    console.log('Row data Dentro do IF: ', row);
-    console.log('CELLNAME Dentro do IF: ', cellName);
+    console.log('Dentro do IF tratamento de alteração de data: ', row);
+    console.log('Dentro do IF tratamento de alteração de data: ', cellName);
+    console.log('Row data Dentro do IF tratamento de alteração de data: ', row);
+    console.log('CELLNAME Dentro do IF tratamento de alteração de data: ', cellName);
     
     var dtTratada = moment(dataToSend.data_nascimento.toString(), 'DD/MM/YYYY');
     var dtOriginal = dtTratada.format('YYYY-MM-DD');
@@ -150,6 +228,19 @@ export default class TableExample extends Component {
      row.data_nascimento = dtOriginal;
    }
 
+   if(cellName === 'nucleoDescricao') {
+     //row.cellName = cellValue;
+     row.nucleo = this.findNucleo(cellValue);
+   }
+
+   if(cellName === 'ativo') {
+    row.ativo = cellValue === "Ativo" ? true : false;
+   }
+   
+   if(cellName === 'tamanho_camisaDescricao') {
+    //row.cellName = cellValue;
+    row.tamanho_camisa = this.findTamanho(cellValue);
+  }
    
 
    console.log('Data antes FORA DO IF:', dtTratada);
@@ -171,10 +262,6 @@ export default class TableExample extends Component {
         }).catch(e => {
           console.log(e);
         })
-
-        var dtTratada = moment(dataToSend.data_nascimento.toString(), 'DD/MM/YYYY');
-        var dtOriginal = dtTratada.format('YYYY-MM-DD');
-        row.data_nascimento = dtOriginal;
         
         
         console.log('row:', row);
@@ -190,6 +277,7 @@ export default class TableExample extends Component {
       closetext: 'Fechar',
       insertModalHeader: this.createCustomModalHeader,
       insertModalFooter: this.createCustomModalFooter,
+      afterInsertRow: this.onAfterInsertRow, // A hook for after insert rows
       handleInsertButtonClick(onClick) {
         // Custom your onClick event here,
         // it's not necessary to implement this function if you have no any process before onClick
@@ -235,16 +323,19 @@ export default class TableExample extends Component {
           insertRow
         /*deleteRow*/
         >
-          <TableHeaderColumn dataField='id' isKey >Id</TableHeaderColumn>
+          <TableHeaderColumn dataField='id' isKey hidden hiddenOnInsert autoValue={true}>Id</TableHeaderColumn>
           <TableHeaderColumn dataField='nome'>Nome</TableHeaderColumn>
           <TableHeaderColumn dataField='data_nascimento'>Data de Nascimento</TableHeaderColumn>
-          {/*<TableHeaderColumn dataField='nucleo' hidden >Núcleo</TableHeaderColumn>*/}
-          <TableHeaderColumn dataField='nucleoDescricao'>Núcleo</TableHeaderColumn>
+          {<TableHeaderColumn dataField='nucleo' hidden hiddenOnInsert>Núcleo</TableHeaderColumn>}
+          {/*<TableHeaderColumn dataField='nucleoDescricao' hiddenOnInsert>Núcleo</TableHeaderColumn>*/}
+          <TableHeaderColumn dataField='nucleoDescricao' editable={ { type:'select', options: {values: this.state.nucleos_desc} } }>Núcleo</TableHeaderColumn>
           <TableHeaderColumn dataField='numero'>Nº</TableHeaderColumn>
-          {/*<TableHeaderColumn dataField='tamanho_camisa' hidden >Tamanho Camisa</TableHeaderColumn>*/}
-          <TableHeaderColumn dataField='tamanho_camisaDescricao'>Tamanho Camisa</TableHeaderColumn>
+          <TableHeaderColumn dataField='cpf'>CPF</TableHeaderColumn>
+          {<TableHeaderColumn dataField='tamanho_camisa' hidden hiddenOnInsert>Tamanho Camisa</TableHeaderColumn>}
+          {/*<TableHeaderColumn dataField='tamanho_camisaDescricao' hiddenOnInsert>Tamanho Camisa</TableHeaderColumn>*/}
+          <TableHeaderColumn dataField='tamanho_camisaDescricao' editable={ { type:'select', options: {values: this.state.tamanho_camisa} } }>Tamanho Camisa</TableHeaderColumn>
           <TableHeaderColumn dataField='celular'>Telefone</TableHeaderColumn>
-          <TableHeaderColumn dataField='ativo' hidden  editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>
+          <TableHeaderColumn dataField='ativo' editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>
           {/*<TableHeaderColumn dataField='ativo' hidden hiddenOnInsert editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>*/}
           {/* <TableHeaderColumn dataField='action' export={ false }>Delete</TableHeaderColumn> */}
         </BootstrapTable>
