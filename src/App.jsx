@@ -60,9 +60,8 @@ class App extends Component {
   componentDidMount = () => {
     //localStorage.clear();
 
-    console.log(localStorage.getItem('token'))
-    console.log(localStorage.getItem('token') !== '')
-    if (localStorage.getItem('token') !== null && localStorage.getItem('token') !== '') {
+    //console.log(localStorage.getItem('tokenAssessoria'))
+    if (localStorage.getItem('tokenAssessoria') !== null && localStorage.getItem('tokenAssessoria') !== '') {
       this.setTable();
     }
     this.email.value = 'labrih';
@@ -76,12 +75,12 @@ class App extends Component {
     }
     axios.post('http://labrih-assessoriaesportiva.herokuapp.com/autenticar', dataToSend)
     .then((response) => {
-      localStorage.setItem('token', response.data);
+      localStorage.setItem('tokenAssessoria', response.data);
       return response.data;
-    }).then(token => {
+    }).then(tokenAssessoria => {
       var cabecalho = {
         headers: {
-          'x-access-token': token
+          'x-access-token': tokenAssessoria
         }      
       }
       return axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/nucleos', cabecalho);
@@ -91,7 +90,7 @@ class App extends Component {
     }).then(() => {
       var cabecalho = {
         headers: {
-          'x-access-token': localStorage.getItem('token')
+          'x-access-token': localStorage.getItem('tokenAssessoria')
         }      
       }
       return axios.get('http://labrih-assessoriaesportiva.herokuapp.com/assessoria/tamanhoscamisa', cabecalho);
@@ -100,7 +99,7 @@ class App extends Component {
       localStorage.setItem('tamanhos', JSON.stringify(tamanhos.data.data));
     }).then(() => {
       this.setTable();
-      this.setState({ logOutButton: <Button onclick={this.logOut}>LogOut</Button> });
+      this.setState({ logOutButton: <Button onclick={this.logOut}>Sair</Button> });
     }).catch(function (error) {
       console.log(error);
       alert("Login ou Senha inválidos.");
