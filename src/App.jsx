@@ -23,8 +23,8 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src="./img/GooglePlay.fw.png" class="img-responsive" ></img></a>
-            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src="./img/AppleStore.fw.png" class="img-responsive" ></img></a>
+            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src= {LogoAndroid} class="img-responsive" ></img></a>
+            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src= {LogoApple} class="img-responsive" ></img></a>
           </div>
         </div>
         <div className="col-md-4 col-sm-4">
@@ -51,14 +51,14 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    //localStorage.clear();
+    localStorage.clear();
 
     //console.log(localStorage.getItem('tokenAssessoria'))
     if (localStorage.getItem('tokenAssessoria') !== null && localStorage.getItem('tokenAssessoria') !== '') {
       this.setTable();
     }
-    this.email.value = 'labrih';
-    this.password.value = 'labrih';
+    //this.email.value = 'labrih';
+    //this.password.value = 'labrih';
   }
 
   login = () => {
