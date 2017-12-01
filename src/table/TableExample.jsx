@@ -6,6 +6,9 @@ import _ from 'lodash';
 //import TableFooter from './TableFooter'
 import './TableExample.css';
 
+import cpf from 'cpf';
+import emailvalidator from 'email-validator';
+
 export default class TableExample extends Component {
   constructor() {
     super();
@@ -62,6 +65,7 @@ export default class TableExample extends Component {
       return rows.push({
         id: runner._id,
         nome: runner.nome,
+        email: runner.email,
         data_nascimento: moment(runner.data_nascimento).format('DD-MM-YYYY').toString(),
         nucleo: runner.nucleo,
         nucleoDescricao: nucleos.find((element, index, array) => {
@@ -137,12 +141,14 @@ export default class TableExample extends Component {
   onAfterInsertRow = (row) => {
     console.log("row", row);
 
+    
     var dataToSend = {
       celular: row.celular,
       numero: row.numero,
       cpf: row.cpf,
       data_nascimento: row.data_nascimento,
       nome: row.nome,
+      email: row.email,
       nucleo: this.findNucleo(row.nucleoDescricao),
       tamanho_camisa: this.findTamanho(row.tamanho_camisaDescricao),
       ativo: row.ativo,
@@ -170,39 +176,55 @@ export default class TableExample extends Component {
 
 
   onBeforeSaveCell = (row, cellName, cellValue) => {
-    var dataToSend = Object.assign({}, row);
-    var dataToSendid = dataToSend.id;
     var id = row.id;
 
+    let data = cellValue;
+
     if(cellName === 'data_nascimento') {
-      var dtTratada = moment(dataToSend.data_nascimento.toString(), 'DD-MM-YYYY');
-      var dtOriginal = dtTratada.format('YYYY-MM-DD');
-      row.data_nascimento = dtOriginal;
-    }
 
-    if(cellName === 'nucleoDescricao') {
-      row.nucleo = this.findNucleo(cellValue);
-    }
+      if(cellValue.split('-').length > 1 && cellValue.split('-')[2].length == 4) {
+        let dd = cellValue.split('-')[0];
+        let mm = cellValue.split('-')[1];
+        let yyyy = cellValue.split('-')[2];
 
-    if(cellName === 'ativo') {
-      row.ativo = cellValue === "Ativo" ? true : false;
-    }
-   
-    if(cellName === 'tamanho_camisaDescricao') {
-      row.tamanho_camisa = this.findTamanho(cellValue);
-    }
-
-    console.log('New date:', new Date(cellValue))
-    console.log('New Date 2:', moment.utc(new Date(cellValue)).format())
+        data = yyyy + '-' + mm + '-' + dd;
+      } else {
+        if(cellValue.split('/').length > 1) {
+          if(cellValue.split('/')[2].length == 4) {
+            let dd = cellValue.split('/')[0];
+            let mm = cellValue.split('/')[1];
+            let yyyy = cellValue.split('/')[2];
     
-    const date = moment(cellValue).format('DD-MM-YYYY');
-    console.log(date)
+            data = yyyy + '-' + mm + '-' + dd;
+          } else {
+            let bar = '/'
+            data = data.split("/").join("-");
+          }
+        }
+      }
 
-    console.log(date)
-    console.log(moment(date).utc().format())
+      data = data + 'T12:00:00.000Z';
 
-    dataToSend = {
-      [cellName]: moment(date).utc().format()
+    }
+    else{
+      if(cellName === 'nucleoDescricao') {
+        cellName = 'nucleo';
+        data = this.findNucleo(cellValue);
+      } else {
+        if(cellName === 'ativo') {
+          data = cellValue === "Ativo" ? true : false;
+        } else {
+          if(cellName === 'tamanho_camisaDescricao') {
+            cellName = 'tamanho_camisa';
+            data = this.findTamanho(cellValue);
+          }
+        }
+    }
+  }
+
+    const dataToSend = {
+      [id]: id,
+      [cellName]: data
     }
     
 
@@ -226,6 +248,36 @@ export default class TableExample extends Component {
     console.log(columns);
     console.log(validateState);
     console.log(ignoreEditable)
+  }
+
+
+  ObrigatorioValidator = (value, row) => {
+    if (value==="") {
+      return "CAMPO OBRIGATÓRIO";
+    }
+    return true;
+  }
+
+  EMAILValidator = (value, row) => {
+    if (!emailvalidator.validate(value)) {
+      return "EMAIL INVÁLIDO";
+    }
+    return true;
+  }
+
+  CPFValidator = (value, row) => {
+    if (!cpf.validate(value)) {
+      return "CPF INVÁLIDO";
+    }
+    return true;
+  }
+
+  TELEFONEValidator = (value, row) => {
+    //const nan = isNaN(parseInt(value, 11));
+    if (! isNaN(value) && value.length >= 11) {
+      return true;
+    }
+    return "TELEFONE INVÁLIDO";
   }
 
   render() {
@@ -258,15 +310,16 @@ export default class TableExample extends Component {
           insertRow
           >
           <TableHeaderColumn dataField='id' isKey hidden hiddenOnInsert autoValue={true}>Id</TableHeaderColumn>
-          <TableHeaderColumn dataField='nome'>Nome</TableHeaderColumn>
-          <TableHeaderColumn dataField='data_nascimento'>Data de Nascimento</TableHeaderColumn>
+          <TableHeaderColumn dataField='nome' editable={ { validator: this.ObrigatorioValidator } }>Nome</TableHeaderColumn>
+          <TableHeaderColumn dataField='email' editable={ { validator: this.EMAILValidator } }>Email</TableHeaderColumn>
+          <TableHeaderColumn dataField='cpf' editable={ { validator: this.CPFValidator } }>CPF</TableHeaderColumn>
+          <TableHeaderColumn dataField='data_nascimento' editable={ { validator: this.ObrigatorioValidator } }>Data de Nascimento</TableHeaderColumn>
           {<TableHeaderColumn dataField='nucleo' hidden hiddenOnInsert>Núcleo</TableHeaderColumn>}
           <TableHeaderColumn dataField='nucleoDescricao' editable={ { type:'select', options: {values: this.state.nucleos_desc} } }>Núcleo</TableHeaderColumn>
-          <TableHeaderColumn dataField='numero'>Nº</TableHeaderColumn>
-          <TableHeaderColumn dataField='cpf'>CPF</TableHeaderColumn>
+          <TableHeaderColumn dataField='numero' editable={ { validator: this.ObrigatorioValidator } }>Nº Tênis </TableHeaderColumn>
           {<TableHeaderColumn dataField='tamanho_camisa' hidden hiddenOnInsert>Tamanho Camisa</TableHeaderColumn>}
           <TableHeaderColumn dataField='tamanho_camisaDescricao' editable={ { type:'select', options: {values: this.state.tamanho_camisa} } }>Tamanho Camisa</TableHeaderColumn>
-          <TableHeaderColumn dataField='celular'>Telefone</TableHeaderColumn>
+          <TableHeaderColumn dataField='celular' editable={ { validator: this.TELEFONEValidator } }>Telefone</TableHeaderColumn>
           <TableHeaderColumn dataField='ativo' editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>
         </BootstrapTable>
       </div>

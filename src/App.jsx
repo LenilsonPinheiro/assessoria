@@ -23,16 +23,9 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-
-{/*https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte*/}
-
-{/*
-            <img src={LogoAndroid} alt="Download para Android" title="Download para Android" onClick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'" />
-            
-            <img src={LogoApple} alt="Download para Apple" title="Download para IOS" onclick="javascript:window.location='https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte'" />
-*/}          
+            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src="./img/GooglePlay.fw.png" class="img-responsive" ></img></a>
+            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src="./img/AppleStore.fw.png" class="img-responsive" ></img></a>
           </div>
-
         </div>
         <div className="col-md-4 col-sm-4">
           <div className="counter">
@@ -146,7 +139,7 @@ class App extends Component {
           <div className="container">
             <div className="row">
               <div>
-                © Copyright 2017 <a href="\assessoria">ASSESSORIA</a>. Todos os direitos reservados.
+                © Copyright 2017 <a href="\assessoria">ASSESSORIA</a>. | Todos os direitos reservados.
                   </div>
             </div>
           </div>
