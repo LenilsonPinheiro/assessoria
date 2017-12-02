@@ -8,7 +8,7 @@ import LogoApple from './img/AppleStore.fw.png';
 import Logo4Throtte from './img/logo2peq.fw.png';
 import LogoAssessoria from './img/logo2peqRunners.png';
 
-import LinhaV from './img/LinhaV.png';
+import LinhaV from './img/LinhaVMenor.png';
 import TableExample from './table/TableExample'
 import axios from 'axios';
 import './App.css';
