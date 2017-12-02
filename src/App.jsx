@@ -6,6 +6,7 @@ import LogoApple from './img/ios_app_store.fw.png';*/
 import LogoAndroid from './img/GooglePlay.fw.png';
 import LogoApple from './img/AppleStore.fw.png';
 import Logo4Throtte from './img/logo2peq.fw.png';
+import LogoAssessoria from './img/logo2peqRunners.png';
 
 import LinhaV from './img/LinhaV.png';
 import TableExample from './table/TableExample'
@@ -92,7 +93,7 @@ class App extends Component {
       localStorage.setItem('tamanhos', JSON.stringify(tamanhos.data.data));
     }).then(() => {
       this.setTable();
-      this.setState({ logOutButton: <Button onclick={this.logOut}>Sair</Button> });
+      this.setState({ logOutButton: <Button onclick={this.logOut} href="http://assessoriaesportiva.s3-website.us-east-2.amazonaws.com">Sair</Button> });
     }).catch(function (error) {
       console.log(error);
       alert("Login ou Senha inválidos.");
@@ -114,16 +115,24 @@ class App extends Component {
       <div className="App">
 
         <section className="page-header">
-          <div className="container">
-            <div className="row">
-              <img src={Logo4Throtte} alt="4Throtte" title="4Throtte" />
-              <div className="col-md-12">
-                <h1>Assesoria XptOoo
-                  <p>{this.state.logOutButton}</p>
-                </h1>
-              </div>
+        <div className="counters counters-text-light">
+          <div className="col-md-4 col-sm-4">
+            <div className="counter">
+              <img float-right src={Logo4Throtte} alt="4Throtte" title="4Throtte" />
             </div>
           </div>
+        </div>
+        <div className="counters counters-text-light">
+          <div className="col-md-4 col-sm-4">
+            <div className="counter">
+            <img float-left />
+            </div>
+          </div>
+        </div>
+        <div>      
+              <img float-left src={LogoAssessoria} alt="Runners" title="Runners" />
+              <p>{this.state.logOutButton}</p>
+        </div>
         </section>
 
         <section className="section section-primary mb-none">

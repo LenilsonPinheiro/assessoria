@@ -1671,7 +1671,7 @@ html[dir="rtl"] #header .header-search .btn-default {
 	min-height: 50px;
 	padding: 20px 0;
 	position: relative;
-	text-align: left;
+	/*text-align: left;*/
 }
 
 .page-header .breadcrumb {
