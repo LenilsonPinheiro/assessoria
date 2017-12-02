@@ -148,7 +148,7 @@ class App extends Component {
           <div className="container">
             <div className="row">
               <div>
-                © Copyright 2017 <a href="\assessoria">ASSESSORIA</a>. | Todos os direitos reservados.
+                © Copyright 2017 <a href="\assessoria">ASSESSORIA</a>. Todos os direitos reservados.
                   </div>
             </div>
           </div>
