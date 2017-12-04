@@ -55,7 +55,7 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    //localStorage.clear();
+    localStorage.clear();
 
     //console.log(localStorage.getItem('tokenAssessoria'))
     if (localStorage.getItem('tokenAssessoria') !== null && localStorage.getItem('tokenAssessoria') !== '') {
@@ -120,7 +120,7 @@ class App extends Component {
   }
 
   logOut = () => {
-    /*localStorage.clear();*/
+    localStorage.clear();
     window.location.reload(true);
 
   }

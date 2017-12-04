@@ -41,9 +41,9 @@ export default class AtletaTable extends Component {
     response.map((runner, key) => {
       return rows.push(
         <tr className="clickable">
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        {/* <td onDoubleClick={() => this.onClickEdit(runner._id)}>
           {runner._id}
-        </td>
+        </td> */}
         <td onDoubleClick={() => this.onClickEdit(runner._id)}>
           {runner.nome}
         </td>
@@ -119,7 +119,7 @@ export default class AtletaTable extends Component {
             <Table bordered condensed hover className="iseqchart">
               <thead>
                 <tr>
-                  <th className="column_code_width" >ID</th>
+                  {/* <th className="column_code_width" >ID</th> */}
                   <th className="column_code_width" >Nome</th>
                   <th className="column_title_width">Email</th>
                   <th className="column_title_width">CPF</th>
