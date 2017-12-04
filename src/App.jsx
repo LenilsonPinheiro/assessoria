@@ -10,6 +10,8 @@ import LogoAssessoria from './img/logo2peqRunners.png';
 
 import LinhaV from './img/LinhaVMenor.png';
 import TableExample from './table/TableExample'
+import AtletaTable from './table/AtletaTable'
+import InsertModal from './table/InsertModal'
 import axios from 'axios';
 import './App.css';
 
@@ -47,12 +49,13 @@ class App extends Component {
             </p>
           </div>
         </div>
-      </div>
+      </div>,
+      showModal: false,
     };
   }
 
   componentDidMount = () => {
-    localStorage.clear();
+    //localStorage.clear();
 
     //console.log(localStorage.getItem('tokenAssessoria'))
     if (localStorage.getItem('tokenAssessoria') !== null && localStorage.getItem('tokenAssessoria') !== '') {
@@ -100,8 +103,20 @@ class App extends Component {
     });
   }
 
+  toogleModal = () => {
+    this.setState({ showModal: !this.state.showModal });
+  }
+
+  fillTable = (response) => {
+    this.setState({ response });
+  }
+
   setTable = () => {
-    this.setState({ content: <div className="panel panel-default"><TableExample /></div> });
+    this.setState({ content: 
+      <div className="">
+        <AtletaTable showModal={this.state.showModal} toogleModal={this.toogleModal} />
+      </div> 
+        });
   }
 
   logOut = () => {
@@ -134,6 +149,8 @@ class App extends Component {
               <p>{this.state.logOutButton}</p>
         </div>
         </section>
+
+        <InsertModal setTable={this.setTable} showModal={this.state.showModal} toogleModal={this.toogleModal}/>
 
         <section className="section section-primary mb-none">
           <div className="container">

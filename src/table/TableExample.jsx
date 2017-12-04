@@ -6,6 +6,8 @@ import _ from 'lodash';
 //import TableFooter from './TableFooter'
 import './TableExample.css';
 
+import CpfEditor from  './CpfEditor';
+
 import cpf from 'cpf';
 import emailvalidator from 'email-validator';
 
@@ -176,6 +178,7 @@ export default class TableExample extends Component {
 
 
   onBeforeSaveCell = (row, cellName, cellValue) => {
+    console.log('beforesave', row);
     var id = row.id;
 
     let data = cellValue;
@@ -280,7 +283,14 @@ export default class TableExample extends Component {
     return "TELEFONE INVÁLIDO";
   }
 
+  cpfFormater = (cell) => {
+    return `CPF :${cell}`
+  }
+
+
   render() {
+    const createPriceEditor = (onUpdate, props) => (<CpfEditor onUpdate={ onUpdate } {...props}/>);
+
     const options = {
       insertText: 'Inserir',
       deleteText: 'Excluir',
@@ -309,17 +319,21 @@ export default class TableExample extends Component {
           condensed
           insertRow
           >
-          <TableHeaderColumn dataField='id' isKey hidden hiddenOnInsert autoValue={true}>Id</TableHeaderColumn>
-          <TableHeaderColumn dataField='nome' editable={ { validator: this.ObrigatorioValidator } }>Nome</TableHeaderColumn>
+          <TableHeaderColumn  dataField='id' isKey hidden hiddenOnInsert autoValue={true}>Id</TableHeaderColumn>
+          <TableHeaderColumn dataField='nome' placeholder= '(ddd)9999-9999' editable={ { validator: this.ObrigatorioValidator, placeholder: '(ddd)9999-9999'} }>Nome</TableHeaderColumn>
           <TableHeaderColumn dataField='email' editable={ { validator: this.EMAILValidator } }>Email</TableHeaderColumn>
-          <TableHeaderColumn dataField='cpf' editable={ { validator: this.CPFValidator } }>CPF</TableHeaderColumn>
+          <TableHeaderColumn 
+            dataField='cpf' 
+            dataFormat={this.cpfFormater} 
+            editable={ { validator: this.CPFValidator } } 
+            customEditor={ { getElement: createPriceEditor, customEditorParameters: { cpf: cpf  } } }>CPF</TableHeaderColumn>
           <TableHeaderColumn dataField='data_nascimento' editable={ { validator: this.ObrigatorioValidator } }>Data de Nascimento</TableHeaderColumn>
           {<TableHeaderColumn dataField='nucleo' hidden hiddenOnInsert>Núcleo</TableHeaderColumn>}
           <TableHeaderColumn dataField='nucleoDescricao' editable={ { type:'select', options: {values: this.state.nucleos_desc} } }>Núcleo</TableHeaderColumn>
           <TableHeaderColumn dataField='numero' editable={ { validator: this.ObrigatorioValidator } }>Nº Tênis </TableHeaderColumn>
           {<TableHeaderColumn dataField='tamanho_camisa' hidden hiddenOnInsert>Tamanho Camisa</TableHeaderColumn>}
           <TableHeaderColumn dataField='tamanho_camisaDescricao' editable={ { type:'select', options: {values: this.state.tamanho_camisa} } }>Tamanho Camisa</TableHeaderColumn>
-          <TableHeaderColumn dataField='celular' editable={ { validator: this.TELEFONEValidator } }>Telefone</TableHeaderColumn>
+          <TableHeaderColumn dataField='celular' editable={ {type:'number', placeholder: '(ddd)9999-9999', validator: this.TELEFONEValidator } }>Telefone</TableHeaderColumn>
           <TableHeaderColumn dataField='ativo' editable={{ type: 'checkbox', options: { values: 'Ativo:Inativo' } }}>Status</TableHeaderColumn>
         </BootstrapTable>
       </div>

@@ -40,6 +40,12 @@ incluir no html
 */
 
 }
+
+.includeButton{
+    float:right;
+    margin: 0 14px 14px 0px;
+}
+
 .botaoApple {
 	background-image:url("./img/AppleStore.fw.png");
 	min-height: 100px !important;
