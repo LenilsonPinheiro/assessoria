@@ -5,7 +5,7 @@ import LogoApple from './img/ios_app_store.fw.png';*/
 
 import LogoAndroid from './img/GooglePlay.fw.png';
 import LogoApple from './img/AppleStore.fw.png';
-import Logo4Throtte from './img/logo2peq.fw.png';
+import Logo4Throtte from './img/LOGO_BRANCA_peq.png';
 import LogoAssessoria from './img/logo2peqRunners.png';
 
 import LinhaV from './img/LinhaVMenor.png';

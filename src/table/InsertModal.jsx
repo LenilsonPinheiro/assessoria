@@ -125,7 +125,7 @@ export default class InsertModal extends Validator {
     if (!response.success) {
       alert('erro');
     } else {
-      alert('Operacao realizada com sucesso');
+      alert('Atleta cadastrado com sucesso!');
       this.toogleModal();
     }
     
@@ -146,13 +146,13 @@ export default class InsertModal extends Validator {
 
     const dateIsValid = this.validate(data.data_nascimento === '', 'date', 'Campo Obrigatório');
     const nameIsValid = this.validate(data.nome === '', 'nome', 'Campo Obrigatório');
-    const emailIsValid = this.validate(!emailvalidator.validate(data.email), 'email', 'Campo Obrigatório');
+    const emailIsValid = this.validate(!emailvalidator.validate(data.email), 'email', 'Email Inválido' || data.email === '', 'email', 'Campo Obrigatório');
     const numeroIsValid = this.validate(data.numero === '', 'numero', 'Campo Obrigatório');
     const nucleoIsValid = this.validate(data.nucleo === '0', 'nucleo', 'Campo Obrigatório');
     const tamanhoIsValid = this.validate(data.tamanho_camisa === '0', 'tamanho', 'Campo Obrigatório');
     const celularIsValid = this.validate(data.celular === '' || data.celular.length < 11, 'celular', 'Campo Obrigatório');
 
-    const cpfIsValid = this.validate(!cpf.validate(data.cpf), 'cpf', 'Campo Obrigatório');
+    const cpfIsValid = this.validate(!cpf.validate(data.cpf), 'cpf', 'CPF Inválido' || data.celular === '', 'cpf', 'Campo Obrigatório');
 
     if(dateIsValid && nameIsValid && emailIsValid && 
       numeroIsValid && nucleoIsValid && tamanhoIsValid && 
@@ -323,6 +323,15 @@ export default class InsertModal extends Validator {
               </FormControl>
               <HelpBlock>{validationResult.statusMessage}</HelpBlock>
             </FormGroup>
+
+
+
+            <FormGroup validationState={validationResult.statusValidationState}>
+              <ControlLabel>Legenda: * Campos obrigatórios.</ControlLabel>
+            </FormGroup>
+
+
+
           </form>
         </Modal.Body>
         <Modal.Footer>
