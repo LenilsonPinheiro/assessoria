@@ -51,12 +51,12 @@ class App extends Component {
           </div>
         </div>
       </div>,
-      showModal: false,
+      modal: { showModal: false, atleta: null },
     };
   }
 
   componentDidMount = () => {
-    localStorage.clear();
+    //localStorage.clear();
 
     //console.log(localStorage.getItem('tokenAssessoria'))
     if (localStorage.getItem('tokenAssessoria') !== null && localStorage.getItem('tokenAssessoria') !== '') {
@@ -104,8 +104,12 @@ class App extends Component {
     });
   }
 
-  toogleModal = () => {
-    this.setState({ showModal: !this.state.showModal });
+  closeModal = () => {
+    this.setState({ modal: {showModal: false, atleta: null }});
+  }
+
+  openModal = (idAtleta = null) => {
+    this.setState({ modal: {showModal: true, atleta: idAtleta }});
   }
 
   fillTable = (response) => {
@@ -115,7 +119,7 @@ class App extends Component {
   setTable = () => {
     this.setState({ content: 
       <div className="">
-        <AtletaTable showModal={this.state.showModal} toogleModal={this.toogleModal} />
+        <AtletaTable showModal={this.state.modal.showModal} openModal={this.openModal} />
       </div> 
         });
   }
@@ -151,7 +155,7 @@ class App extends Component {
         </div>
         </section>
 
-        <InsertModal setTable={this.setTable} showModal={this.state.showModal} toogleModal={this.toogleModal}/>
+        <InsertModal setTable={this.setTable} modal={this.state.modal} closeModal={this.closeModal} />
 
         <section className="section section-primary mb-none">
           <div className="container">

@@ -32,9 +32,9 @@ export default class InsertModal extends Validator {
     this.fillTamanhoDropdown();
   }
 
-  onChangeStartDate = (value, formattedValue) => {
+  onChangeStartDate = (value, formattedValue) => {console.log(value)
     this.setState({
-      startDate: value.split('T')[0], // ISO String, ex: "2016-11-19T12:00:00.000Z"
+      startDate: value ? value.split('T')[0] + 'T12:00:00.000Z' : '', // ISO String, ex: "2016-11-19T12:00:00.000Z"
       formattedValue, // Formatted String, ex: "11/19/2016"
     });
   }
@@ -42,16 +42,35 @@ export default class InsertModal extends Validator {
   componentWillReceiveProps(nextProps) {
     this.fillNucleoDropdown();
     this.fillTamanhoDropdown();
-    const showModal = nextProps.showModal;
+    const showModal = nextProps.modal.showModal;
 
     this.setState({ showModal });
 
 
-    /*const idArea = nextProps.modal.idArea;
+    const atleta = nextProps.modal.atleta;
+    
+    if (atleta !== null && atleta._id && showModal) {
+      console.log(atleta);
+      this.fillModalToEdit(atleta);
+    }
+  }
 
-    if (!isNaN(idArea) && idArea !== null && showModal) {
-      GenericController.doRequest('get', `/api/area/${idArea}`, this.fillModalToEdit);
-    }*/
+  fillModalToEdit = (atleta) => {
+    setTimeout(() => {
+      if(this.nome){
+        this.nome.value = atleta.nome;
+        this.email.value = atleta.email;
+        this.nucleo.value = atleta.nucleo;
+        this.camisa.value = atleta.tamanho_camisa;
+        this.status.value = atleta.ativo ? 0 : 1;
+        this.setState({
+          cpf: atleta.cpf,
+          celular: atleta.celular,
+          fieldOnlyNumbers: atleta.numero,
+          startDate: atleta.data_nascimento,
+        })
+      }
+    }, 1000);
   }
 /*
   fillModalToEdit = (response) => {
@@ -115,17 +134,18 @@ export default class InsertModal extends Validator {
   } */
 
   toogleModal = () => {
-
     this.props.setTable();
-    this.props.toogleModal();
-    
+    this.props.closeModal();
+    this.setState({
+      validationResult: {},
+    });
   }
 
   treatResponse = (response) => {
     if (!response.success) {
       alert('erro');
     } else {
-      alert('Atleta cadastrado com sucesso!');
+      alert('Ação realizada com sucesso!');
       this.toogleModal();
     }
     
@@ -158,16 +178,30 @@ export default class InsertModal extends Validator {
       numeroIsValid && nucleoIsValid && tamanhoIsValid && 
       celularIsValid && cpfIsValid) {
 
-        axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", data, {
-          headers: {
-          'x-access-token': localStorage.getItem('tokenAssessoria')
-        }}).then((response) => {
-          this.treatResponse(response.data);
-        }).catch(function (error) {
-          alert(error.response.data.message);
-          //this.loadData();
-        });
-        console.log("tokenAssessoria do salvar: ",localStorage.getItem('tokenAssessoria'));
+        if (this.props.modal.atleta !== null && this.props.modal.atleta._id) {
+          console.log('puting')
+          axios.put("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/"+this.props.modal.atleta._id, data, {
+            headers: {'x-access-token': localStorage.getItem('tokenAssessoria')}
+          }).then(response => {
+            console.log(response)
+            this.treatResponse(response.data);
+          }).catch(e => {
+            console.log(e);
+          });
+
+        } else {
+          console.log('posting')
+          axios.post("https://labrih-assessoriaesportiva.herokuapp.com/assessoria/atletas/", data, {
+            headers: {
+            'x-access-token': localStorage.getItem('tokenAssessoria')
+          }}).then((response) => {
+            this.treatResponse(response.data);
+          }).catch(function (error) {
+            alert(error.response.data.message);
+            //this.loadData();
+          });
+          console.log("tokenAssessoria do salvar: ",localStorage.getItem('tokenAssessoria'));
+        }
 
     }
     
@@ -252,6 +286,7 @@ export default class InsertModal extends Validator {
                 type='text' 
                 name='cpf' 
                 mask='111.111.111-11'
+                value={this.state.cpf}
                 onChange={this.onCPFChanged}
                 inputRef={(input) => { this.cpf = input; }}/>
                 
@@ -303,11 +338,12 @@ export default class InsertModal extends Validator {
               <HelpBlock>{validationResult.tamanhoMessage}</HelpBlock>
             </FormGroup>
             <FormGroup validationState={validationResult.celularValidationState}>
-              <ControlLabel>Telefone</ControlLabel>
+              <ControlLabel>Telefone*</ControlLabel>
               <MaskedFormControl 
                 type='text' 
                 name='phoneNumber' 
                 mask='(11)11111-1111'
+                value={this.state.celular}
                 onChange={this.onPhoneChanged}/>
               <HelpBlock>{validationResult.celularMessage}</HelpBlock>
             </FormGroup>
