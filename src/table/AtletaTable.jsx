@@ -22,8 +22,8 @@ export default class AtletaTable extends Component {
     this.updateTable();
   }
 
-  onClickEdit(idArea) {
-    //this.props.showModal(idArea);
+  onClickEdit(atleta) {
+    this.props.openModal(atleta);
   }
 
   onClickRemove(idArea) {
@@ -44,37 +44,42 @@ export default class AtletaTable extends Component {
         {/* <td onDoubleClick={() => this.onClickEdit(runner._id)}>
           {runner._id}
         </td> */}
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.nome}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.email}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.cpf}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {moment(runner.data_nascimento).format('DD-MM-YYYY').toString()}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {nucleos.find((element, index, array) => {
             return element._id == runner.nucleo
           }).Descricao}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.numero}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {tamanhos.find((element, index, array) => {
             return element._id == runner.tamanho_camisa
           }).Descricao}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.celular}
         </td>
-        <td onDoubleClick={() => this.onClickEdit(runner._id)}>
+        <td onDoubleClick={() => this.onClickEdit(runner)}>
           {runner.ativo === true ? 'Ativo' : 'Inativo'}
         </td>
+        <td>
+          <Button onClick={() => this.onClickEdit(runner)} bsSize="xsmall">
+            <i className="fa fa-pencil-square-o" />
+          </Button>
+          </td>
         </tr>
         )
     }),
@@ -112,7 +117,7 @@ export default class AtletaTable extends Component {
   render() {
     return (
       <div>
-        <Button bsStyle='primary' className='includeButton' onClick={this.props.toogleModal}>Inserir </Button>
+        <Button bsStyle='primary' className='includeButton' onClick={this.props.openModal}>Inserir </Button>
         <Row>
           <Col md={12} >
             {/*<div className="includeButton">{this.props.addButton}</div>*/}
@@ -127,11 +132,11 @@ export default class AtletaTable extends Component {
                   <th className="column_code_width">Núcleo</th>
                   <th className="column_code_width">Nº Tenis</th>
                   <th className="column_code_width">Tamanho Camiseta</th>
-                  <th className="column_title_width">Telefone</th>
+                  <th className="column_title_width">Telefone*</th>
                   <th className="column_code_width">Status</th>
-                  {/*<th className="column_code_width">
-                    {T.translate('actions')}
-      </th>*/}
+                  <th className="column_code_width">
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody>
