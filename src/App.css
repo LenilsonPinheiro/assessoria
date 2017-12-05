@@ -1680,6 +1680,13 @@ html[dir="rtl"] #header .header-search .btn-default {
 	/*text-align: left;*/
 }
 
+/*Lenilson desabilitando botão*/
+.disabled {
+	text-decoration: none !important; 
+	color: gray !important;
+	cursor: default !important;
+  }
+
 .page-header .breadcrumb {
 	background: none;
 	margin: 0 0 2px 2px;

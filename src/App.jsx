@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import LogoApple from './img/ios_app_store.fw.png';*/
 
 import LogoAndroid from './img/GooglePlay.fw.png';
-import LogoApple from './img/AppleStore.fw.png';
+// import LogoApple from './img/AppleStore.fw.png';
+import LogoApple from './img/AppleStoreDisabled.fw.png';
 import Logo4Throtte from './img/LOGO_BRANCA_peq.png';
 import LogoAssessoria from './img/logo2peqRunners.png';
 
@@ -26,8 +27,8 @@ class App extends Component {
         <div className="col-md-4 col-sm-4">
           <div className="counter">
             <p>App do aluno. Escolha uma das opções disponíveis.</p>
-            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src= {LogoAndroid} class="img-responsive" ></img></a>
-            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" src= {LogoApple} class="img-responsive" ></img></a>
+            <a href="https://play.google.com/store/apps/details?id=br.com.labrih.fourthrotte" target="_blank"><img alt="4THROTTE" title="Clique para ser direcionado a GOOGLE PLAY." src= {LogoAndroid} class="img-responsive" ></img></a>
+            <a><img alt="4THROTTE" title="Em breve, disponível também na Apple Store." src= {LogoApple} class="img-responsive" ></img></a>
           </div>
         </div>
         <div className="col-md-4 col-sm-4">
@@ -96,7 +97,7 @@ class App extends Component {
       localStorage.setItem('tamanhos', JSON.stringify(tamanhos.data.data));
     }).then(() => {
       this.setTable();
-      this.setState({ logOutButton: <Button onclick={this.logOut} href="http://assessoriaesportiva.s3-website.us-east-2.amazonaws.com">Sair</Button> });
+      this.setState({ logOutButton: <Button bsStyle="primary" onclick={this.logOut} href="http://assessoriaesportiva.s3-website.us-east-2.amazonaws.com">Sair</Button> });
     }).catch(function (error) {
       console.log(error);
       alert("Login ou Senha inválidos.");

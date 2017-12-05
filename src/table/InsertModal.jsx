@@ -327,7 +327,7 @@ export default class InsertModal extends Validator {
 
 
             <FormGroup validationState={validationResult.statusValidationState}>
-              <ControlLabel>Legenda: * Campos obrigatórios.</ControlLabel>
+              <ControlLabel>Legenda:  * Campos obrigatórios.</ControlLabel>
             </FormGroup>
 
 
